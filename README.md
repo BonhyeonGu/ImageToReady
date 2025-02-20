@@ -71,7 +71,7 @@ Select either directory 2 or directory 3 and apply it to the ```RUN git clone```
         "locale" : "/usr/share/nginx/html/"
     },
     "cmd" : [
-        "rclone mount remote:/_Share/_Lock/VRC /source --read-only --daemon --vfs-cache-mode full --vfs-cache-max-size 20G"
+        "rclone mount remote:/Share /source --read-only --daemon --vfs-cache-mode full --vfs-cache-max-size 20G"
     ],
 
     "jd" : {
