@@ -41,8 +41,7 @@ It supports two options: using rclone and utilizing a local storage solution.
 
 Select either directory 2 or directory 3 and apply it to the ```RUN git clone``` command in the Dockerfile. After that, modify the ```png2mp4.json``` file. Below is an example:
 
-```
-
+```json
 {
     "interTime" : 5,
 
@@ -83,5 +82,4 @@ Select either directory 2 or directory 3 and apply it to the ```RUN git clone```
         "step" : 2
     }
 }
-
 ```
