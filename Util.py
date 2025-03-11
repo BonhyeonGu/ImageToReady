@@ -291,7 +291,7 @@ class Util:
         while fidx != len(file_list):
             for i in range(splitSize):
                 for j in range(splitSize):
-                    pic = cv2.imread(file_list[fidx][0])
+                    pic = cv2.imread(file_list[fidx])
                     fidx += 1
                     result_image[i*h:(i+1)*h, j*w:(j+1)*w] = pic
             cv2.imwrite(f'./jd.png', result_image)

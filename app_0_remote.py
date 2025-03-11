@@ -35,7 +35,7 @@ def routine(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, dr
     for i in fileList:
         print(i, end=" ")
         util.resizeAndPutText(i, tagOn, dateType, localeTags, namePattern)
-        print("")
+    print("")
 
     #print("%s start: ffmpeg" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
     if mp4On:
@@ -65,7 +65,7 @@ def routineJD(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, 
     for i in fileList:
         print(i, end=" ")
         util.resizeAndPutTextJD(i, tagOn, dateType, localeTags, namePattern)
-        print("")
+    print("")
     #한개라는 가정
     util.merge(fileList)
     #----------------------------------------------------------------------------------------------------------
