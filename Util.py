@@ -74,9 +74,11 @@ class Util:
     def pickImageLocale(self, localeInp: str, localeBlacks: list, dropD: int, dropS: int, pick_count: int, ext: str):
         ret = []
         pickAll = []
+        
         #------------------------------------------------------------------------------------------
         allDirsRet = self.allDirs(localeInp, localeBlacks)
         allDirsRet.append(localeInp)
+        
         for dir in allDirsRet:
             dir2fileName_list = os.listdir(dir)
             for dir2fileName in dir2fileName_list:
@@ -84,58 +86,60 @@ class Util:
                 if not ext or dir2fileName.lower().endswith(ext):
                     fullName = os.path.join(dir, dir2fileName)
                     pickAll.append(fullName)
+        
+        #------------------------------------------------------------------------------------------
         try:
             with open('./dropcache.json', 'r') as f:
                 dropDict = json.load(f)
         except FileNotFoundError:
             dropDict = dict()
-        #-예외-------------------------------------------------------------------------------------
+        
+        #------------------------------------------------------------------------------------------
+        # 예외 처리: 사용할 수 있는 파일이 너무 적을 경우
         if (len(pickAll) + pick_count) < len(dropDict):
             print("!!! : Small Result, Please edit Distance or Step")
             dropDict = dict()
-            return random.sample(pickAll, pick_count)
+            return random.sample(pickAll, min(len(pickAll), pick_count))
+
         #------------------------------------------------------------------------------------------
-        pickEdit_dropCache = [] # 전체 리스트 - 드롭 캐시
-        dropKeys = dropDict.keys()
-        for i in pickAll:
-            if i not in dropKeys:
-                pickEdit_dropCache.append(i)
+        pickEdit_dropCache = [i for i in pickAll if i not in dropDict]
+        
         #------------------------------------------------------------------------------------------
         for i in range(pick_count):
+            if not pickEdit_dropCache:
+                break  # 남은 파일이 없으면 중단
+            
             pick_value = random.choice(pickEdit_dropCache)
-            #---------------------------------------------------
             ret.append(pick_value)
             pickEdit_dropCache.remove(pick_value)
             dropDict[pick_value] = dropS
+
             #---------------------------------------------------
             real_idx = pickAll.index(pick_value)
-            for j in range(real_idx, real_idx - dropD - 1, -1):
-                #-----------------------------------------------
-                if j == -1:
-                    break
-                if pickAll[j] in dropKeys:
-                    continue
-                #-----------------------------------------------
-                pickEdit_dropCache.remove(pickAll[j])
-                dropDict[pickAll[j]] = dropS
-            #---------------------------------------------------
-            for j in range(real_idx, real_idx + dropD + 1):
-                #-----------------------------------------------
-                if j == -1:
-                    break
-                if pickAll[j] in dropKeys:
-                    continue
-                #-----------------------------------------------
-                pickEdit_dropCache.remove(pickAll[j])
-                dropDict[pickAll[j]] = dropS
+
+            # 삭제할 항목을 미리 저장
+            to_remove = set()
+
+            for j in range(real_idx, max(0, real_idx - dropD - 1), -1):
+                if pickAll[j] not in dropDict:
+                    to_remove.add(pickAll[j])
+                    dropDict[pickAll[j]] = dropS
+
+            for j in range(real_idx, min(len(pickAll), real_idx + dropD + 1)):
+                if pickAll[j] not in dropDict:
+                    to_remove.add(pickAll[j])
+                    dropDict[pickAll[j]] = dropS
+            
+
+            pickEdit_dropCache = [x for x in pickEdit_dropCache if x not in to_remove]
+
         #------------------------------------------------------------------------------------------
-        for key, value in dropDict.items():
-            if value > 1:
-                dropDict[key] = value - 1
+        dropDict = {key: (value - 1 if value > 1 else 0) for key, value in dropDict.items()}
+
         with open('dropcache.json', 'w') as f:
             json.dump(dropDict, f, indent=4)
+
         return ret
-    
 
     def resizeAndPutText(self, file_abs_path: str, tagOn: bool, dateType: int, localeTags: dict, namePattern, w=1920, h=1080, tx=1528, ty=1040):
         size = (w, h)
