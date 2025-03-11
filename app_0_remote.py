@@ -64,7 +64,7 @@ def routineJD(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, 
     fileList = util.pickImageLocale(localeInp, localeBlacks, dropD, dropS, 4, ".png")
     for i in fileList:
         print(i, end=" ")
-        util.resizeAndPutTextJD(i, tagOn, dateType, localeTags)
+        util.resizeAndPutTextJD(i, tagOn, dateType, localeTags, namePattern)
         print("")
     #한개라는 가정
     util.merge(fileList)
