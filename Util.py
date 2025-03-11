@@ -134,7 +134,7 @@ class Util:
             pickEdit_dropCache = [x for x in pickEdit_dropCache if x not in to_remove]
 
         #------------------------------------------------------------------------------------------
-        dropDict = {key: (value - 1 if value > 1 else 0) for key, value in dropDict.items()}
+        dropDict = {key: value - 1 for key, value in dropDict.items() if value > 1}
 
         with open('dropcache.json', 'w') as f:
             json.dump(dropDict, f, indent=4)
