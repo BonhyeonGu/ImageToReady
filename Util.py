@@ -92,7 +92,7 @@ class Util:
         #-예외-------------------------------------------------------------------------------------
         if (len(pickAll) + pick_count) < len(dropDict):
             print("!!! : Small Result, Please edit Distance or Step")
-            nextDropFiles = dict()
+            dropDict = dict()
             return random.sample(pickAll, pick_count)
         #------------------------------------------------------------------------------------------
         pickEdit_dropCache = [] # 전체 리스트 - 드롭 캐시
@@ -131,9 +131,9 @@ class Util:
         #------------------------------------------------------------------------------------------
         for key, value in dropDict.items():
             if value > 1:
-                nextDropFiles[key] = value - 1
+                dropDict[key] = value - 1
         with open('dropcache.json', 'w') as f:
-            json.dump(nextDropFiles, f, indent=4)
+            json.dump(dropDict, f, indent=4)
         return ret
     
 
