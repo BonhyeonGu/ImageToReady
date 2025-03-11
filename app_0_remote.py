@@ -32,10 +32,8 @@ def routine(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, dr
     print("%s start: routine" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
     fileList = util.pickImageLocale(localeInp, localeBlacks, dropD, dropS, 6, ".png")
-    for i in range(len(fileList)):
-        print(fileList[i][1])
     for i in fileList:
-        print(fileList[i], end=" ")
+        print(i, end=" ")
         util.resizeAndPutText(i, tagOn, dateType, localeTags, namePattern)
         print("")
 
@@ -65,7 +63,7 @@ def routine(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, dr
 def routineJD(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, dropS: int, tagOn: bool, dateType: str, mp4On: bool, host: str, port: int, id: str, pw: str, sftpOutLocale: str, ) -> None:
     fileList = util.pickImageLocale(localeInp, localeBlacks, dropD, dropS, 4, ".png")
     for i in fileList:
-        print(fileList[i], end=" ")
+        print(i, end=" ")
         util.resizeAndPutTextJD(i, tagOn, dateType, localeTags)
         print("")
     #한개라는 가정
