@@ -117,6 +117,7 @@ if __name__ == "__main__":
                 if jdSw:
                     routineJD(jdInp, jdBlacklist, localeTags, jdDropD, jdDropS, tagOn, dateType, mp4On, host, port, id, pw, sftpOutLocale)
                 routine(localeInp, localeBlacks, localeTags, dropD, dropS, tagOn, dateType, mp4On, host, port, id, pw, sftpOutLocale)
+                print("")
 
             except ValueError as ve:
                 print(f"Caught a ValueError: {ve}")

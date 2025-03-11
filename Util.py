@@ -96,10 +96,10 @@ class Util:
         
         #------------------------------------------------------------------------------------------
         # 예외 처리: 사용할 수 있는 파일이 너무 적을 경우
-        if (len(pickAll) + pick_count) < len(dropDict):
-            print("!!! : Small Result, Please edit Distance or Step")
-            dropDict = dict()
-            return random.sample(pickAll, min(len(pickAll), pick_count))
+        #if (len(pickAll) + pick_count) < len(dropDict):
+        #    print("!!! : Small Result, Please edit Distance or Step")
+        #    dropDict = dict()
+        #    return random.sample(pickAll, min(len(pickAll), pick_count))
 
         #------------------------------------------------------------------------------------------
         pickEdit_dropCache = [i for i in pickAll if i not in dropDict]
