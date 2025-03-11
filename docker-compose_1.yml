@@ -6,7 +6,7 @@ services:
     container_name: pngpick_web
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile_1
     environment:
       TZ: "Asia/Seoul"
     ports:

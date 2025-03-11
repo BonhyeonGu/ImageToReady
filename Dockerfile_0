@@ -25,3 +25,8 @@ RUN mkdir cmd
 RUN mkdir /source
 COPY ./setting.json ./
 ENTRYPOINT ["/bin/sh", "-c" , "python3 app_0_remote.py"]
+
+#rclone config
+#https://cloud.9bon.org/remote.php/dav/files/whwhdtk
+#rclone mount remote:/_Share/_Lock/VRC /source --read-only --daemon --vfs-cache-mode full --vfs-cache-max-size 20G && touch cmd/START
+#rclone lsd remote:/_Share/_Lock/VRC
