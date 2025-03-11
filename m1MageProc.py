@@ -36,69 +36,10 @@ class ImageProc:
             os.makedirs(self.pDirCp)
 
     
-    def image_ReSize_PutText_Copy(self, fullName: str, tagOn: bool, dateType: int, localeTags: dict) -> None:
-        name = os.path.basename(fullName)
-
-        w = self.oSizeW
-        h = self.oSizeH
-
-        size = (w, h)
-
-        base_pic=np.zeros((size[1],size[0],3),np.uint8)
-        pic1=cv2.imread(fullName, cv2.IMREAD_COLOR)
-        try:
-            while(True):
-                h,w=pic1.shape[:2]
-                break
-        except Exception as e:
-            print(f"Error! : {type(e).__name__}", end="")
-            print(fullName)
-            return
-        ash = size[1]/h
-        asw = size[0]/w
-        if asw<ash:
-            sizeas = (int(w*asw), int(h*asw))
-        else:
-            sizeas = (int(w*ash), int(h*ash))
-        pic1 = cv2.resize(pic1,dsize=sizeas)
-        base_pic[int(size[1]/2-sizeas[1]/2):int(size[1]/2+sizeas[1]/2),
-        int(size[0]/2-sizeas[0]/2):int(size[0]/2+sizeas[0]/2),:]=pic1
-
-        if tagOn:
-            if dateType == 0:
-                tag = os.path.getctime(fullName)
-                timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-            elif dateType == 1:
-                tag = os.path.getmtime(fullName)
-                timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-            elif dateType == 2:
-                search_res = self.namePattern.search(name)
-                try:
-                    search_res = search_res.groups()
-                    timetag = '%s.%s.%s %s:%s'%(search_res[0], search_res[1], search_res[2], search_res[3], search_res[4])
-                except:
-                    tag = os.path.getmtime(fullName)
-                    timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-            else:
-                return
-            #------------------------------------------------------
-            untagch = True
-            for key in localeTags.keys():
-                if key in fullName:
-                    timetag += f" {localeTags[key]}"
-                    untagch = False
-                    break
-            if untagch:
-                if "__ELSE__" in localeTags.keys():
-                    timetag += f' {localeTags["__ELSE__"]}'
-                else:
-                    timetag += " __"
-            #------------------------------------------------------
-            cv2.putText(base_pic,timetag,(self.oSizeTX,self.oSizeTY),cv2.FONT_HERSHEY_SCRIPT_COMPLEX,1,(0,0,0),4,cv2.LINE_AA)
-            cv2.putText(base_pic,timetag,(self.oSizeTX,self.oSizeTY),cv2.FONT_HERSHEY_SCRIPT_COMPLEX,1,(255,255,255),1,cv2.LINE_AA)
-        cv2.imwrite(os.path.join(self.pDirCp, name), base_pic)
-
-
+    def image_ReSize_PutText_Copy(self, file_abs_path: str, tagOn: bool, dateType: int, localeTags: dict) -> None:
+        util.resizeAndPutText(file_abs_path, tagOn, dateType, localeTags, self.namePattern, self.oSizeW, self.oSizeH, self.oSizeTX, self.oSizeTY)
+        
+        
     def updateCpList(self) -> None:
         cps = set()
         try:
@@ -118,6 +59,7 @@ class ImageProc:
             cps.remove((fullName, size))
         oMc = oris - cps
         numNew = len(oMc)
+
         for fullName, size in oMc:
             self.image_ReSize_PutText_Copy(fullName, self.tagSw, self.tagType, self.pathToTag)
             cps.add((fullName, size))

@@ -137,120 +137,130 @@ class Util:
         return ret
     
 
-    def resizeAndPutText(self, fileList: list, tagOn: bool, dateType: int, localeTags: dict, w=1920, h=1080):
+    def resizeAndPutText(self, file_abs_path: str, tagOn: bool, dateType: int, localeTags: dict, namePattern, w=1920, h=1080, tx=1528, ty=1040):
         size = (w, h)
-        for file in fileList:
-            base_pic = np.zeros((size[1],size[0],3),np.uint8)
-            pic1 = cv2.imread(file[1], cv2.IMREAD_COLOR)
-            try:
-                while(True):
-                    h,w=pic1.shape[:2]
-                    break
-            except:
-                print("치명적인 문제!")
-                print(file)
-                continue
-            ash = size[1]/h
-            asw = size[0]/w
-            if asw<ash:
-                sizeas = (int(w*asw), int(h*asw))
+        
+        file_name = os.path.basename(file_abs_path)
+        base_pic = np.zeros((size[1], size[0], 3), np.uint8)
+        pic1 = cv2.imread(file_abs_path, cv2.IMREAD_COLOR)
+        
+        try:
+            while True:
+                h, w = pic1.shape[:2]
+                break
+        except:
+            print("치명적인 문제!")
+            print(file_abs_path)
+            return
+        
+        ash = size[1] / h
+        asw = size[0] / w
+        if asw < ash:
+            sizeas = (int(w * asw), int(h * asw))
+        else:
+            sizeas = (int(w * ash), int(h * ash))
+        
+        pic1 = cv2.resize(pic1, dsize=sizeas)
+        base_pic[int(size[1] / 2 - sizeas[1] / 2):int(size[1] / 2 + sizeas[1] / 2),
+                int(size[0] / 2 - sizeas[0] / 2):int(size[0] / 2 + sizeas[0] / 2), :] = pic1
+        
+        if tagOn:
+            if dateType == 0:
+                tag = os.path.getctime(file_abs_path)
+                timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
+            elif dateType == 1:
+                tag = os.path.getmtime(file_abs_path)
+                timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
+            elif dateType == 2:
+                search_res = namePattern.search(file_name)
+                try:
+                    search_res = search_res.groups()
+                    timetag = '%s.%s.%s %s:%s' % (search_res[0], search_res[1], search_res[2], search_res[3], search_res[4])
+                except:
+                    tag = os.path.getmtime(file_abs_path)
+                    timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
             else:
-                sizeas = (int(w*ash), int(h*ash))
-            pic1 = cv2.resize(pic1,dsize=sizeas)
-            base_pic[int(size[1]/2-sizeas[1]/2):int(size[1]/2+sizeas[1]/2),
-            int(size[0]/2-sizeas[0]/2):int(size[0]/2+sizeas[0]/2),:]=pic1
-
-            if tagOn:
-                if dateType == 0:
-                    tag = os.path.getctime(file[1])
-                    timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-                elif dateType == 1:
-                    tag = os.path.getmtime(file[1])
-                    timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-                elif dateType == 2:
-                    search_res = namePattern.search(file[0])
-                    try:
-                        search_res = search_res.groups()
-                        timetag = '%s.%s.%s %s:%s'%(search_res[0], search_res[1], search_res[2], search_res[3], search_res[4])
-                    except:
-                        tag = os.path.getmtime(file[1])
-                        timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
+                return
+            
+            untagch = True
+            for key in localeTags.keys():
+                if key in file_abs_path:
+                    timetag += f" {localeTags[key]}"
+                    untagch = False
+                    break
+            if untagch:
+                if "__ELSE__" in localeTags.keys():
+                    timetag += f' {localeTags["__ELSE__"]}'
                 else:
-                    break
-                #------------------------------------------------------
-                untagch = True
-                for key in localeTags.keys():
-                    if key in file[1]:
-                        timetag += f" {localeTags[key]}"
-                        untagch = False
-                        break
-                if untagch:
-                    if "__ELSE__" in localeTags.keys():
-                        timetag += f' {localeTags["__ELSE__"]}'
-                    else:
-                        timetag += " __"
-                #------------------------------------------------------
-                cv2.putText(base_pic,timetag,(1528,1040),cv2.FONT_HERSHEY_SCRIPT_COMPLEX,1,(0,0,0),4,cv2.LINE_AA)
-                cv2.putText(base_pic,timetag,(1528,1040),cv2.FONT_HERSHEY_SCRIPT_COMPLEX,1,(255,255,255),1,cv2.LINE_AA)
-            cv2.imwrite('./' + file[0], base_pic)
+                    timetag += " __"
+            
+            cv2.putText(base_pic, timetag, (tx, ty), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1, (0, 0, 0), 4, cv2.LINE_AA)
+            cv2.putText(base_pic, timetag, (tx, ty), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+        
+        cv2.imwrite('./' + file_name, base_pic)
 
 
-    def resizeAndPutTextJD(self, file_list, tagOn, dateType, localeTags: dict, w=1920, h=1080, splitSize=2, textSize=1, tx=650, ty=515):
-        size = (w//splitSize, h//splitSize)
-        for file in file_list:
-            base_pic = np.zeros((size[1],size[0],3),np.uint8)
-            pic1 = cv2.imread(file[1], cv2.IMREAD_COLOR)
-            try:
-                while(True):
-                    h,w=pic1.shape[:2]
-                    break
-            except:
-                print("치명적인 문제!")
-                print(file)
-                continue
-            ash = size[1]/h
-            asw = size[0]/w
-            if asw<ash:
-                sizeas = (int(w*asw), int(h*asw))
+    def resizeAndPutTextJD(self, file_abs_path: str, tagOn, dateType, localeTags: dict, namePattern, w=1920, h=1080, splitSize=2, textSize=1, tx=650, ty=515):
+        size = (w // splitSize, h // splitSize)
+        
+        file_name = os.path.basename(file_abs_path)
+        base_pic = np.zeros((size[1], size[0], 3), np.uint8)
+        pic1 = cv2.imread(file_abs_path, cv2.IMREAD_COLOR)
+        
+        try:
+            while True:
+                h, w = pic1.shape[:2]
+                break
+        except:
+            print("치명적인 문제!")
+            print(file_abs_path)
+            return
+        
+        ash = size[1] / h
+        asw = size[0] / w
+        if asw < ash:
+            sizeas = (int(w * asw), int(h * asw))
+        else:
+            sizeas = (int(w * ash), int(h * ash))
+        
+        pic1 = cv2.resize(pic1, dsize=sizeas)
+        base_pic[int(size[1] / 2 - sizeas[1] / 2):int(size[1] / 2 + sizeas[1] / 2),
+                int(size[0] / 2 - sizeas[0] / 2):int(size[0] / 2 + sizeas[0] / 2), :] = pic1
+        
+        if tagOn:
+            if dateType == 0:
+                tag = os.path.getctime(file_abs_path)
+                timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
+            elif dateType == 1:
+                tag = os.path.getmtime(file_abs_path)
+                timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
+            elif dateType == 2:
+                search_res = namePattern.search(file_name)
+                try:
+                    search_res = search_res.groups()
+                    timetag = '%s.%s.%s %s:%s' % (search_res[0], search_res[1], search_res[2], search_res[3], search_res[4])
+                except:
+                    tag = os.path.getmtime(file_abs_path)
+                    timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
             else:
-                sizeas = (int(w*ash), int(h*ash))
-            pic1 = cv2.resize(pic1,dsize=sizeas)
-            base_pic[int(size[1]/2-sizeas[1]/2):int(size[1]/2+sizeas[1]/2),
-            int(size[0]/2-sizeas[0]/2):int(size[0]/2+sizeas[0]/2),:]=pic1
-
-            if tagOn:
-                if dateType == 0:
-                    tag = os.path.getctime(file[1])
-                    timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-                elif dateType == 1:
-                    tag = os.path.getmtime(file[1])
-                    timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-                elif dateType == 2:
-                    search_res = namePattern.search(file[0])
-                    try:
-                        search_res = search_res.groups()
-                        timetag = '%s.%s.%s %s:%s'%(search_res[0], search_res[1], search_res[2], search_res[3], search_res[4])
-                    except:
-                        tag = os.path.getmtime(file[1])
-                        timetag = datetime.fromtimestamp(tag).strftime('%Y.%m.%d %H:%M')
-                else:
+                return
+            
+            untagch = True
+            for key in localeTags.keys():
+                if key in file_abs_path:
+                    timetag += f" {localeTags[key]}"
+                    untagch = False
                     break
-                #------------------------------------------------------
-                untagch = True
-                for key in localeTags.keys():
-                    if key in file[1]:
-                        timetag += f" {localeTags[key]}"
-                        untagch = False
-                        break
-                if untagch:
-                    if "__ELSE__" in localeTags.keys():
-                        timetag += f' {localeTags["__ELSE__"]}'
-                    else:
-                        timetag += " __"
-                #------------------------------------------------------
-                cv2.putText(base_pic,timetag,(tx,ty),cv2.FONT_HERSHEY_SCRIPT_COMPLEX,textSize,(0,0,0),4,cv2.LINE_AA)
-                cv2.putText(base_pic,timetag,(tx,ty),cv2.FONT_HERSHEY_SCRIPT_COMPLEX,textSize,(255,255,255),1,cv2.LINE_AA)
-            cv2.imwrite('./' + file[0], base_pic)
+            if untagch:
+                if "__ELSE__" in localeTags.keys():
+                    timetag += f' {localeTags["__ELSE__"]}'
+                else:
+                    timetag += " __"
+            
+            cv2.putText(base_pic, timetag, (tx, ty), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, textSize, (0, 0, 0), 4, cv2.LINE_AA)
+            cv2.putText(base_pic, timetag, (tx, ty), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, textSize, (255, 255, 255), 1, cv2.LINE_AA)
+        
+        cv2.imwrite('./' + file_name, base_pic)
 
 
     """
