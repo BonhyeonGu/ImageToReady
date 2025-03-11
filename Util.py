@@ -145,9 +145,8 @@ class Util:
         pic1 = cv2.imread(file_abs_path, cv2.IMREAD_COLOR)
         
         try:
-            while True:
-                h, w = pic1.shape[:2]
-                break
+            h, w = pic1.shape[:2]
+
         except:
             print("치명적인 문제!")
             print(file_abs_path)
@@ -208,9 +207,7 @@ class Util:
         pic1 = cv2.imread(file_abs_path, cv2.IMREAD_COLOR)
         
         try:
-            while True:
-                h, w = pic1.shape[:2]
-                break
+            h, w = pic1.shape[:2]
         except:
             print("치명적인 문제!")
             print(file_abs_path)
@@ -291,7 +288,7 @@ class Util:
         while fidx != len(file_list):
             for i in range(splitSize):
                 for j in range(splitSize):
-                    pic = cv2.imread(file_list[fidx])
+                    pic = cv2.imread("./"+ os.path.basename(file_list[fidx]))
                     fidx += 1
                     result_image[i*h:(i+1)*h, j*w:(j+1)*w] = pic
             cv2.imwrite(f'./jd.png', result_image)
