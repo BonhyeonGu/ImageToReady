@@ -29,7 +29,7 @@ def imagesToMp4(fileList):
 
 
 def routine(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, dropS: int, tagOn: bool, dateType: str, mp4On: bool, host: str, port: int, id: str, pw: str, sftpOutLocale: str, ) -> None:
-    print("%s start: routine" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    print("%s start: routine00" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
     fileList = util.pickImageLocale(localeInp, localeBlacks, dropD, dropS, 6, ".png")
     for i in fileList:
@@ -55,12 +55,12 @@ def routine(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, dr
             sftp.put('./out0.mp4', sftpOutLocale+'out0.mp4')
     #----------------------------------------------------------------------------------------------------------
     os.system('rm -rf ./*.png')
-
-    print("%s end: routine" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-    print("")
+    print("%s end: routine00" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
 
 def routineJD(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, dropS: int, tagOn: bool, dateType: str, mp4On: bool, host: str, port: int, id: str, pw: str, sftpOutLocale: str, ) -> None:
+    print("%s start: routineJD" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    
     fileList = util.pickImageLocale(localeInp, localeBlacks, dropD, dropS, 4, ".png")
     for i in fileList:
         print(i, end=" ")
@@ -75,6 +75,7 @@ def routineJD(localeInp: str, localeBlacks: list, localeTags: dict, dropD: int, 
         sftp.put(f"jd.png", sftpOutLocale+f"jd.png")
     #----------------------------------------------------------------------------------------------------------
     os.system('rm -rf ./*.png')
+    print("%s end: routineJD" % (datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
 
 if __name__ == "__main__":
