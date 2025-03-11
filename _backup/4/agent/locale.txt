@@ -1,9 +1,0 @@
-300
-/source
-3
-10
-vrc:11
-root/2322
-/usr/share/nginx/html/
-1
-1

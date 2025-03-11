@@ -1,5 +1,0 @@
-600
-/source
-/usr/share/nginx/html/
-1
-1

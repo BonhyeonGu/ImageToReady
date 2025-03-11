@@ -6,7 +6,9 @@ from datetime import datetime
 import random
 import json
 
-from Util import allFilesTwoList, allFilesSet 
+from Util import Util
+
+util = Util()
 
 class ImageProc:
     def __init__(self, dictArg: dict) -> None:
@@ -107,7 +109,7 @@ class ImageProc:
         except FileNotFoundError:
             pass
         
-        oris = allFilesSet(self.pDirOri, self.dirBlack, 'png')
+        oris = util.allFilesSet(self.pDirOri, self.dirBlack, 'png')
 
         cMo = cps - oris
         numDel = len(cMo)
@@ -129,50 +131,4 @@ class ImageProc:
 
 
     def pathRandPick(self) -> list:
-        #------------------------------------------------------------------------------------------
-        tempRet, emmRet = allFilesTwoList(self.pDirCp, self.dirBlack, 'png')
-        #------------------------------------------------------------------------------------------
-        try:
-            with open(self.pFileDrop, 'r') as f:
-                dropFiles = json.load(f)
-        except FileNotFoundError:
-            dropFiles = dict()
-        #------------------------------------------------------------------------------------------
-        nextDropFiles = dict()
-        #------------------------------------------------------------------------------------------
-        tempRet = [item for item in tempRet if item not in dropFiles or dropFiles[item] <= 1]
-        
-        if len(tempRet) < self.numPick:
-            print("!!! : Small Result, Please edit Distance or Step")
-            nextDropFiles = dict()
-            ret = random.sample(emmRet, self.numPick)
-        else:
-            idxList = list(range(len(tempRet)))
-            idxRet = []
-            ret = []
-            # 위에는 키 값으로 비교하지만 여기선 인덱스로 비교한다. 순서가 꼬일 수 있다는 것을 고려해야한다.
-            # 효율 없지만 순서가 지켜져야하기 때문에..
-            for i in range(self.numPick):
-                ri = random.choice(idxList)
-                for j in range(ri, ri + self.dropD + 1):
-                    if j in idxList:
-                        idxList.remove(j)
-                        nextDropFiles[tempRet[j]] = self.dropS
-                for j in range(ri - self.dropD, ri):
-                    if j in idxList:
-                        idxList.remove(j)
-                        nextDropFiles[tempRet[j]] = self.dropS
-                idxRet.append(ri)
-                #------------------------------------------------------------------------------------------
-                # [0]은 이름 [1]은 파일 경로
-                nextDropFiles[tempRet[ri]] = self.dropS
-                ret.append(tempRet[ri])
-            #------------------------------------------------------------------------------------------
-            for key, value in dropFiles.items():
-                if value > 1:
-                    nextDropFiles[key] = value - 1
-            
-            with open(self.pFileDrop, 'w') as f:
-                json.dump(nextDropFiles, f, indent=4)
-            #------------------------------------------------------------------------------------------
-        return ret
+        return util.pickImageLocale(self.pDirCp, self.dirBlack, self.dropD, self.dropS, self.numPick, 'png')

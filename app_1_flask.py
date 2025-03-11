@@ -3,11 +3,11 @@ import threading
 import time
 import json
 from datetime import datetime
-from Util import procTime, checkMoreThanSec
-from ImageProc import ImageProc
+from Util import Util
+from m1MageProc import ImageProc
 import logging
 
-
+util = Util()
 app = Flask(__name__)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -34,14 +34,14 @@ def update():
     with app.app_context():  
         while True:
             # Update check
-            if checkMoreThanSec(lastUpdateTime, timeUP) or swFirst:
+            if util.checkMoreThanSec(lastUpdateTime, timeUP) or swFirst:
                 tTime = datetime.now()
                 imgproc.updateCpList()
-                print(f">>{procTime(tTime)}")
+                print(f">>{util.procTime(tTime)}")
                 lastUpdateTime = datetime.now()
 
             # Pick check
-            if checkMoreThanSec(lastPickTime, timePick) or swFirst:
+            if util.checkMoreThanSec(lastPickTime, timePick) or swFirst:
                 swFirst = False
                 tTime = datetime.now()
                 ret = imgproc.pathRandPick()
@@ -55,7 +55,7 @@ def update():
                 for i in ret:
                     print(f"{i.split('.')[1][:3]} ", end="")
                     n += 1
-                print(f">> {procTime(tTime)}")
+                print(f">> {util.procTime(tTime)}")
                 lastPickTime = datetime.now()
 
             time.sleep(5)

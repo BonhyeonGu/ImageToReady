@@ -7,10 +7,13 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    ports:
-      - "12000:22"
-    volumes:
-      - /a:/source
-      - ./cmd:/root/p/2/agent/cmd
     environment:
         TZ: "Asia/Seoul"
+    devices:
+      - "/dev/fuse"
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /home/ubuntu/Docker/png2mp4/vol:/source

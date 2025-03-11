@@ -1,0 +1,46 @@
+{
+    "interTime" : 20,
+
+    "locale_inp" : "/source",
+    "locale_blacklist" : ["_JustDance", "@eaDir", "Travel"],
+
+    "locale_tag" : {
+        "applemint231" : "AM",
+        "uNeet" : "UN",
+        "maron0623": "MA",
+        "Finics": "FI",
+        "mado": "MD",
+        "Day": "DY",
+        "Martini": "MT",
+        "jmt": "JM",
+        "__ELSE__" : "NB"
+    },
+
+    "tag_on" : true,
+    "date_type" : 2,
+    "mp4_on" : false,
+
+    "drop" : {
+        "distance" : 2,
+        "step" : 600
+    },
+
+    "sftp" : {
+        "host" : "10.0.0.115",
+        "port" : 12000,
+        "id" : "root",
+        "pw" : "!!!!qkqh106!!!!",
+        "locale" : "/usr/share/nginx/html/"
+    },
+    "cmd" : [
+        "rclone mount remote:/_Share/_Lock/VRC /source --read-only --daemon --vfs-cache-mode full --vfs-cache-max-size 30G"
+    ],
+
+    "jd" : {
+        "sw" : true,
+        "inp" : "/source/_JustDance",
+        "blacklist" : ["@eaDir", "NeedsCleanup"],
+        "distance" : 1,
+        "step" : 80
+    }
+}
