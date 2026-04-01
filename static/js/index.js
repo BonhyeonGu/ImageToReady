@@ -41,12 +41,8 @@ function showPreviousImage() {
 }
 
 function showImage(){
-    const imgTag = document.getElementById('photo');
-    const currentSrc = imgTag.getAttribute('src');
-    
     // 새 탭에서 현재 이미지를 열기 (저장 목적)
-    const imageUrl = `${currentSrc}`;
-    window.open(imageUrl, '_blank');
+    window.open(`/photo/${currentIndex}`, '_blank');
 }
 
 function pollImageList() {
@@ -63,7 +59,9 @@ function pollImageList() {
                 console.log('A change has been detected in the image list. Reloading images.');
                 selectedPhotos = newPhotos;
                 totalImages = selectedPhotos.length;
-                currentIndex = 0;
+                if(currentIndex >= totalImages){
+                    currentIndex = 0;
+                }
                 updateImage(currentIndex);
             }
         })
