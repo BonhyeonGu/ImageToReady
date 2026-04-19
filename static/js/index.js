@@ -5,6 +5,9 @@ let currentIndex = 0;
 let totalImages = 0;
 let retryCount = 0;
 
+const POLL_INTERVAL_MS = 10000;
+let pollingTimer = null;
+
 function updateImage(index) {
     const imgTag = document.getElementById('photo');
     const newImageUrl = `/photo/${index}?${new Date().getTime()}`;
@@ -38,13 +41,33 @@ function showPreviousImage() {
 }
 
 function showImage(){
-    const imgTag = document.getElementById('photo');
-    const currentSrc = imgTag.getAttribute('src');
-    
     // 새 탭에서 현재 이미지를 열기 (저장 목적)
-    const imageUrl = `${currentSrc}`;
-    window.open(imageUrl, '_blank');
+    window.open(`/photo/${currentIndex}`, '_blank');
 }
+
+function pollImageList() {
+    fetch('/api/images')
+        .then(response => response.json())
+        .then(data => {
+            const newPhotos = data.images;
+
+            const changed =
+                newPhotos.length !== selectedPhotos.length ||
+                newPhotos.some((path, i) => path !== selectedPhotos[i]);
+
+            if (changed) {
+                console.log('A change has been detected in the image list. Reloading images.');
+                selectedPhotos = newPhotos;
+                totalImages = selectedPhotos.length;
+                if(currentIndex >= totalImages){
+                    currentIndex = 0;
+                }
+                updateImage(currentIndex);
+            }
+        })
+        .catch(error => console.error('Polling error: ', error));
+}
+
 
 function fetchImageList() {
     fetch('/api/images')
@@ -54,6 +77,7 @@ function fetchImageList() {
             totalImages = selectedPhotos.length;
             if (totalImages > 0) {
                 updateImage(currentIndex);
+                pollingTimer = setInterval(pollImageList, POLL_INTERVAL_MS); 
             }
         })
         .catch(error => console.error('Error fetching image list:', error));
